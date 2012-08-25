@@ -1,2 +1,4 @@
-gcc StatusMGR.c ClientDataReader.c -o client
-gcc StatusMGR.c GetData.c testserver.c -o server 
+gcc DayData.h Drawer/SDLMGR.h Drawer/SDLMGR.c Drawer/AreaMGR.h Drawer/AreaMGR.c Drawer/DrawLib.c StatusHandler/StatusMGR.c ClientDataReader.c -o client -lSDL -lSDL_draw
+
+gcc DayData.h StatusHandler/StatusMGR.c DataHandler/GetData.c testserver.c -o server
+

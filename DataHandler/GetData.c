@@ -22,7 +22,7 @@
 #define  GETDATA_INC
 
 
-#include "DayData.h"
+#include "../DayData.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
