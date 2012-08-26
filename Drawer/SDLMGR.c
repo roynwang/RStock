@@ -17,7 +17,6 @@
  */
 #include <stdlib.h>
 #include <SDL/SDL.h>
-#include <SDL/SDL_draw.h>
 #include "DrawLib.h"
 #include "AreaMGR.h"
 #include <time.h>

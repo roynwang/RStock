@@ -19,7 +19,7 @@
 
 
 #include <stdlib.h>
-#include <SDL/SDL_draw.h>
+#include "../inc/SDL_draw.h"
 #include <sys/shm.h>
 #include "../DayData.h"
 #include "SubArea.h"

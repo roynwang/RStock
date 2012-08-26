@@ -31,7 +31,6 @@
 #include <time.h>
 #include "Drawer/SDLMGR.h"
 #include <SDL/SDL.h>
-#include <SDL/SDL_draw.h>
 #include "Drawer/SubArea.h"
 #include "Drawer/AreaMGR.h"
 
