@@ -17,13 +17,13 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include "STATUS.h"
+#include "StatusHandler/STATUS.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "DayData.h"
-#include "GetData.h"
+#include "DataHandler/GetData.h"
 	
 
 int fifo_svstat, fifo_ctstat, fifo_shstat;
