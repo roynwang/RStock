@@ -30,7 +30,7 @@
 #include <fcntl.h>  
 #include <time.h>
 #include "Drawer/SDLMGR.h"
-#include <SDL/SDL.h>
+#include "inc/SDL.h"
 #include "Drawer/SubArea.h"
 #include "Drawer/AreaMGR.h"
 

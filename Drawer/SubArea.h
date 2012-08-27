@@ -28,7 +28,7 @@
 #define MAGENTA                          16711935
 #define YELLOW                           16776960
 
- #include "SDL/SDL.h"
+ #include "../inc/SDL.h"
 typedef struct tagSubWin{
 	SDL_Surface *screen;
 	int startx;
