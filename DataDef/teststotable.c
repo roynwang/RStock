@@ -38,11 +38,8 @@ main ( int argc, char *argv[] )
 	StoItem si3 = (StoItem)malloc(sizeof(struct tagStoItem));
 
 	si1->SN = 1;
-	si1->next = si2;
 	si2->SN = 2;
-	si2->next = si3;
 	si3->SN = 3;
-	si3->next = NULL;
 
 	printf("initialize done!!!\n");
 	AddItem(table, si1);

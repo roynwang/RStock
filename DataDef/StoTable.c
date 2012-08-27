@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include "DayData.h"
 #include "StoTable.h"
+#include <sys/shm.h>
 
 void FreeStock(int shmid){
 	int next, cur;
@@ -35,7 +36,6 @@ void FreeStock(int shmid){
 	}
 	printf ( "Free share memory finished\n" );
 }
-/
 StoTable InitStoTable(){
 	StoTable ta = (StoTable)malloc(sizeof(struct tagStoItem));
 	ta->size = 0;
@@ -44,6 +44,11 @@ StoTable InitStoTable(){
 }
 
 void DtyStoTable(StoTable st){
+	if(!st->item) {
+		free(st);
+		st = NULL;
+		return;
+	}
 	StoItem cur = st->item;
 	StoItem next = cur->next;
 	while(cur->next!=NULL){
@@ -53,6 +58,7 @@ void DtyStoTable(StoTable st){
 		cur = NULL;
 		cur = next;
 	}
+	FreeStock(cur->shmid);
 	free(cur);
 	cur = NULL;
 	free(st);
@@ -60,6 +66,7 @@ void DtyStoTable(StoTable st){
 }
 
 void AddItem(StoTable st, StoItem si){ 
+	si->next = NULL;
 	if(!st->item){
 		st->item = si;
 		st->size++;
@@ -67,7 +74,7 @@ void AddItem(StoTable st, StoItem si){
 	}
 	StoItem head = st->item;
 	int i;
-	for(i=0; i<st->size; i++){
+	for(i=1; i<st->size; i++){
 		head= head->next;
 	}
 	head->next = si;

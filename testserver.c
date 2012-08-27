@@ -24,11 +24,14 @@
 #include <sys/shm.h>
 #include "DataDef/DayData.h"
 #include "DataHandler/GetData.h"
+#include "DataDef/StoTable.c"
+
 	
 
 int fifo_svstat, fifo_ctstat, fifo_shstat;
 int svrshmid;
 int *svstat;
+StoTable allstock;
 
 int MemReadDayTDX(int no){
 	return ReadAllDayTDX("sh600242.day");
@@ -43,6 +46,8 @@ void InitializeServer(){
 	fifo_ctstat = CreateFIFO(CLTSTATUS, O_RDONLY);
 	fifo_shstat = CreateFIFO(SVRSHMID,  O_WRONLY);
 	SendInt(fifo_svstat, svrshmid);
+
+	allstock = InitStoTable();
 
 	printf ( "server started!\n" );
 }
@@ -61,32 +66,29 @@ int  ReadReq(){
 }
 int ExecuteReq(int no){
 	//start to read the data
+	StoItem h;
 	printf ( "executing the query: %d\n", no );
+	if( (h = GetBySN(allstock, no)) != NULL){
+		SendInt(fifo_shstat, h->shmid);
+		return h->shmid;
+	}
 	int head = MemReadDayTDX(no);
-	//done
 	SetServerStatus(SVRREADY);
 	SendInt(fifo_shstat, head);
+	StoItem si = (StoItem)malloc(sizeof(struct tagStoItem));
+	si->SN = no;
+	si->shmid = head;
+	AddItem(allstock, si);
 	return head;
 }
 
-
-void FreeShm(int shmid){
-	int next, cur;
-	cur = shmid;
-	
-	while(cur!=0){
-		DayData d = (DayData)shmat(cur,NULL, 0);
-		next= d->next;
-		printf ( "Next is %d\n", next );
-		printf ( "Now free %d\n", cur );
-
-		shmctl(cur,IPC_RMID, NULL);
-		shmdt(d);
-		
-		cur = next;
-	}
-	printf ( "Free share memory finished\n" );
+void Finialize(){
+	DtyStoTable(allstock);
+	unlink(SVRSTATUS);
+	unlink(SVRSHMID);
+	unlink(CLTSTATUS);
 }
+
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  main
@@ -106,8 +108,5 @@ main ( int argc, char *argv[] )
 		num = ExecuteReq(no);
 	}
 	printf ( "Pipe CLTSTATUS closed\n" );
-	FreeShm(num);
-	unlink(SVRSTATUS);
-	unlink(SVRSHMID);
-	unlink(CLTSTATUS);
+	Finialize();
 }				/* ----------  end of function main  ---------- */
