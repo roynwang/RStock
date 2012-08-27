@@ -21,7 +21,7 @@
 
 
 #include <stdlib.h>
-#include "DayData.h"
+#include "DataDef/DayData.h"
 #include "StatusHandler/StatusMGR.h"
 #include "StatusHandler/STATUS.h"
 #include <stdio.h>
@@ -62,6 +62,20 @@ int QueryByNo(int no){
 	printf ( "%d memory = %d \n", no, shmid );
 	return shmid;
 }
+void WaitKeyboard(){
+	int quit = 0;
+	SDL_Event event;
+	while(quit!=1)
+	{
+		SDL_WaitEvent(&event);
+		switch (event.type){
+			case SDL_QUIT:
+				printf("caugth keyboard esc !\n");
+				quit = 1;
+		}
+	}
+}
+
 
 void InitShow(){
 	SDL_Surface *screen;
@@ -80,11 +94,14 @@ void InitShow(){
 
 	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
 	//Wait 10 seconds
-	SDL_Delay( 10000 );
+	//	SDL_Delay( 10000 );
+	WaitKeyboard();
+
 	endSDL();
-	fprintf(stderr, "显示结束。。。。");
+
 
 }
+
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -96,6 +113,7 @@ void InitShow(){
 main ( int argc, char *argv[] )
 {
 	InitializeClient();
+
 	InitShow();
 }				/* ----------  end of function main  ---------- */
 

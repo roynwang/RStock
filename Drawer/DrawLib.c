@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include "../inc/SDL_draw.h"
 #include <sys/shm.h>
-#include "../DayData.h"
+#include "../DataDef/DayData.h"
 #include "SubArea.h"
 
 DayData ReadByShmid(int shmid){

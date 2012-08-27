@@ -20,7 +20,7 @@
 #define  DRAWLIB_INC
 
 #include "SubArea.h"
-#include "../DayData.h"
+#include "../DataDef/DayData.h"
 void drawLine(SubWin sw, Sint16 x, Sint16 y, Sint16 ex, Sint16 ey, Uint32 color);
 
 void drawCandlestick(SubWin w, int x, float lowprice, float highprice, DayData data); 
