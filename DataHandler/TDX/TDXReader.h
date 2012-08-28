@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  GetData.h
+ *       Filename:  TDXReader.h
  *
  *    Description:  
  *
  *        Version:  1.0
- *        Created:  08/28/2012 08:45:50 PM
+ *        Created:  08/28/2012 08:43:31 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -16,8 +16,13 @@
  * =====================================================================================
  */
 
-#ifndef  GETDATA_INC
-#define  GETDATA_INC
 
-#include "TDX/TDXReader.h"
-#endif   /* ----- #ifndef GETDATA_INC  ----- */
+
+#ifndef  TDXREADER_INC
+#define  TDXREADER_INC
+
+int ReadDayTDX(FILE *fid, DayData day, int date);
+
+int ReadAllDayTDX(const char* path);
+
+#endif   /* ----- #ifndef TDXREADER_INC  ----- */

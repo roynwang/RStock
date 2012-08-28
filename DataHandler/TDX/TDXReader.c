@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  GetData.c
+ *       Filename:  TDXReader.c
  *
  *    Description:  
  *
@@ -18,11 +18,7 @@
 
 
 
-#ifndef  GETDATA_INC
-#define  GETDATA_INC
-
-
-#include "../DataDef/DayData.h"
+#include "../../DataDef/DayData.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -96,8 +92,4 @@ int ReadAllDayTDX(const char* path){
 
 }
 
-
-
-
-#endif   /* ----- #ifndef GETDATA_INC  ----- */
 
