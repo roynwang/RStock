@@ -24,6 +24,7 @@
 #include <time.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <string.h>
 
 
 long GetToday(){
@@ -65,13 +66,10 @@ int ReadDayTDX(FILE *fid, DayData day, int date){
 int ReadAllDayTDX(const char* path){
 	int p = 0;
 	FILE * fid;
+	int count = 0;
 
-	//initialzie the head node 
-	int shmid, head;
-	shmid=shmget(0,DUSIZE,IPC_CREAT|0666);
-	head = shmid;
-	DayData dd = (DayData)shmat(shmid, NULL, 0);
-
+	DayData dd = (DayData)malloc(DUSIZE);
+	DayData head = dd;
 	fid=fopen(path,"r");
 
 	while(!feof(fid) &&( p>GetToday() || p<STARTDAY)){
@@ -79,17 +77,28 @@ int ReadAllDayTDX(const char* path){
 	}
 
 	while(p<= GetToday() && !feof(fid)){
+		count++;
 		ReadDayTDX(fid,dd,p);
-		printf ( "write shmid %d with date %d\n", shmid, p );
-		shmid=shmget(0,DUSIZE,IPC_CREAT|0666);
-		dd->next = shmid;
-		dd = (DayData)shmat(shmid, NULL, 0);
+		dd->next = NULL;
 		fread(&p, sizeof(unsigned int), 1, fid);
+		if(p<=GetToday() && !feof(fid)){
+			DayData tmp = (DayData) malloc( DUSIZE);
+			dd->next = tmp;
+			dd = tmp;
+		}
 	}
-
 	fclose(fid);
-	return head;
-
+	int shmid = shmget(0,DUSIZE*count,IPC_CREAT|0666);
+	DayData h = (DayData)shmat(shmid, NULL,0);
+	while(head){
+		memcpy(h, head, DUSIZE);
+		h++;
+		DayData cur = head;
+		head = head->next;
+		free(cur);
+		cur = NULL;
+	}
+	return shmid;
 }
 
 

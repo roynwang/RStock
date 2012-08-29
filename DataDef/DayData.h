@@ -33,7 +33,10 @@ typedef struct tagDayData{
 	float highest;
 	float lowest;
 	float volume;
-	int next;
+	union {
+		int count;
+		struct tagDayData* next;
+	};
 } *DayData;
 #endif   /* ----- #ifndef DAYDATA_INC  ----- */
 

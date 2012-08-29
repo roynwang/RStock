@@ -32,14 +32,15 @@ void delchar(char *s, char c)
 	for(p=s;p<=s+i;p++){
 		if(*p==c){
 			q=p;
-			for(i--;p<=s+i;p++)  //进行覆盖
-				*p=*p+1;
+			for(i--;p<=s+i;p++)
+				*p=*(p+1);
 			p=q--;
 		}	
 	}
 }
 int FormatDate(char* date){
 	delchar(date, '-');
+	printf("Now date = %s \n",date);
 	return atoi(date);
 }
 
@@ -50,25 +51,37 @@ int ReadAllDayYahoo(const char* path){
 	char line[200];
 	printf(".");
 	//skip the firt line
-	int shmid,head,lshmid;
-	lshmid = 0;
-	printf(".");
 	fgets(line,200, fid);
-
-	printf(".");
-	while(fgets(line, 200, fid)){
-		printf("trying to new memory");
-		shmid = shmget(0, DUSIZE, IPC_CREAT|0666);
-
-		printf("memory initialized");
-		DayData dd= (DayData)shmat(shmid, NULL, 0);
-		dd->next = lshmid;
-		ReadDayYahoo(line, dd);
-		head = shmid;
-		lshmid = shmid;
+	printf ( "xxxxxxxxxxxxxxx\n" );
+	DayData head, prev;
+	prev = NULL;
+	int count = 0;
+	while(fgets(line, 200, fid) ){
+		DayData tmp = (DayData)malloc(DUSIZE);
+		ReadDayYahoo(line, tmp);
+		tmp->next = prev;
+		prev = tmp;
+		head = tmp;
+		count ++;
 	}
 	fclose(fid);
-	return head;
+	int shmid = shmget(0, DUSIZE*count,IPC_CREAT|0666); 
+	DayData h = (DayData)shmat(shmid, NULL, 0);
+	while(head){
+		memcpy(h,head, DUSIZE);
+		printf("copied. Date = %d\n", h->date);
+		h++;
+		DayData cur = head;
+		head = head->next;
+
+		//free current node
+		free(cur);
+		cur = NULL;
+		
+	}
+	printf ( "count = %d shmid = %d\n", count, shmid );
+	printf ( "void * = %d, int = %d\n", sizeof(void*),sizeof(int));
+	return shmid;
 }
 
 
@@ -97,9 +110,8 @@ void ReadDayYahoo(char* line, DayData day){
 				day->end = atof(word);
 				break;
 			case 5:	
+				day->volume = atof(word);
 				//should read volume here;
-				break;
-			case 6:
 				break;
 			default:
 				break;

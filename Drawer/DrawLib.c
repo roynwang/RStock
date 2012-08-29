@@ -20,22 +20,17 @@
 
 #include <stdlib.h>
 #include "../inc/SDL_draw.h"
-#include <sys/shm.h>
 #include "../DataDef/DayData.h"
 #include "SubArea.h"
-
-DayData ReadByShmid(int shmid){
-	return (DayData)shmat(shmid, NULL, 0);
-}
 
 void getScaleFromDayDataSet(DayData ds, int size, float *h, float *l){
 	int i;
 	*h = 0;
 	*l = 10000;
 	while(size-->0){
-		ds = ReadByShmid(ds->next);
 		if(ds->lowest < *l) *l = ds->lowest;
 		if(ds->highest > *h) *h = ds->highest;
+		ds++;
 	}
 	*l*=0.8;
 	*h*=1.2;
@@ -110,10 +105,10 @@ void drawCandlesticks(SubWin sw, DayData ds, int size){
 	DayData head = ds;
 	getScaleFromDayDataSet(ds,size,&h,&l);
 	for(i = 0; i<size; i++){
-		head = ReadByShmid(head->next);
 		printf("date = %d start:%f end:%f\n", head->date, head->start, head->end);
 //		printf("drawing %f: %f %f %f %f\n", i, head->start, head->end, head->highest, head->lowest);
 		drawCandlestick(sw,10*i+1,l,h, head);
+		head++;
 	}
 }
 

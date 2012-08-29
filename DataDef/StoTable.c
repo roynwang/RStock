@@ -21,20 +21,10 @@
 #include <sys/shm.h>
 
 void FreeStock(int shmid){
-	int next, cur;
-	cur = shmid;
-	
-	while(cur!=0){
-		DayData d = (DayData)shmat(cur,NULL, 0);
-		next= d->next;
-		printf ( "Now free %d\n", cur );
-
-		shmctl(cur,IPC_RMID, NULL);
-		shmdt(d);
-		
-		cur = next;
-	}
-	printf ( "Free share memory finished\n" );
+	DayData d = (DayData)shmat(shmid,NULL, 0);
+	shmctl(shmid,IPC_RMID, NULL);
+	shmdt(d);
+	printf ( "Free share memory %d finished\n", shmid );
 }
 StoTable InitStoTable(){
 	StoTable ta = (StoTable)malloc(sizeof(struct tagStoItem));
@@ -95,7 +85,7 @@ StoItem GetBySN(StoTable st, int SN){
 int DelItem(StoTable st, int SN){
 	StoItem head = st->item;
 	StoItem last = head;
-	
+
 	while(head->SN != SN && head->next!=NULL) {
 		last = head;
 		head = head->next;

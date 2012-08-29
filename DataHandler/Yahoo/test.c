@@ -33,8 +33,9 @@ main ( int argc, char *argv[] )
 {
 //	char* url = "http://ichart.finance.yahoo.com/table.csv?s=DAI.DE&a=NaN&b=02&c=pr-2&g=d&ignore=.csv";
 //	DownloadURL(url, "yahooresult.csv");
+    int head;
 
-    ReadAllDayYahoo("yahooresult.csv");
+    head = ReadAllDayYahoo("yahooresult.csv");
 
 	return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */
