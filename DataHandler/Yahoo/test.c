@@ -19,7 +19,8 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include "YahooDownloader.h"
-
+#include "../../DataDef/DayData.h"
+#include <sys/shm.h>
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -30,7 +31,10 @@
 	int
 main ( int argc, char *argv[] )
 {
-	char* url = "http://ichart.finance.yahoo.com/table.csv?s=DAI.DE&a=NaN&b=02&c=pr-2&g=d&ignore=.csv";
-	DownloadURL(url, "yahooresult.csv");
+//	char* url = "http://ichart.finance.yahoo.com/table.csv?s=DAI.DE&a=NaN&b=02&c=pr-2&g=d&ignore=.csv";
+//	DownloadURL(url, "yahooresult.csv");
+
+    ReadAllDayYahoo("yahooresult.csv");
+
 	return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */

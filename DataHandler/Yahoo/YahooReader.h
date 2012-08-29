@@ -18,7 +18,6 @@
 
 #ifndef  YAHOOREADER_INC
 #define  YAHOOREADER_INC
-void ReadDayYahoo(FILE *fid, DayData day, int data);
 
 void ReadAllDayYahoo(const char* path);
 
