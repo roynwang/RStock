@@ -16,15 +16,24 @@
  * =====================================================================================
  */
 #include <stdlib.h>
+#include <stdio.h>
 #include "DayData.h"
 #include "StoTable.h"
 #include <sys/shm.h>
 
-void FreeStock(int shmid){
-	DayData d = (DayData)shmat(shmid,NULL, 0);
-	shmctl(shmid,IPC_RMID, NULL);
+void FreeStock(StoItem si){
+	DayData d = (DayData)shmat(si->shmid,NULL, 0);
+	shmctl(si->shmid,IPC_RMID, NULL);
 	shmdt(d);
-	printf ( "Free share memory %d finished\n", shmid );
+	printf ( "Free share memory %d finished\n", si->shmid );
+
+	char sf[10];
+	sprintf(sf, "%d", si->SN);
+	unlink(sf);
+	printf ( "deleted the stock data %d\n", si->SN );
+	free(si);
+	si = NULL;
+
 }
 StoTable InitStoTable(){
 	StoTable ta = (StoTable)malloc(sizeof(struct tagStoItem));
@@ -33,24 +42,25 @@ StoTable InitStoTable(){
 	return ta;
 }
 
+
 void DtyStoTable(StoTable st){
 	if(!st->item) {
+		printf ( "table is null\n" );
 		free(st);
 		st = NULL;
 		return;
 	}
+
 	StoItem cur = st->item;
 	StoItem next = cur->next;
 	while(cur->next!=NULL){
 		next = cur->next;
-		FreeStock(cur->shmid);
-		free(cur);
-		cur = NULL;
+		FreeStock(cur);
 		cur = next;
 	}
-	FreeStock(cur->shmid);
-	free(cur);
-	cur = NULL;
+	FreeStock(cur);
+
+	printf ( "Free Stock Table finished\n" );
 	free(st);
 	st = NULL;
 }

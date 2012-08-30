@@ -115,7 +115,7 @@ void DrawCan(SubWin sw, DayData head){
 }
 
 void Event_pagedown(SubWin sw){
-	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
+	DayData head = (DayData)shmat(QueryByNo(600000), NULL, 0);
 	DrawCan(sw, head);
 }
 
