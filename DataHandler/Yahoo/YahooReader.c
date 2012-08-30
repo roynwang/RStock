@@ -40,7 +40,6 @@ void delchar(char *s, char c)
 }
 int FormatDate(char* date){
 	delchar(date, '-');
-	printf("Now date = %s \n",date);
 	return atoi(date);
 }
 
@@ -52,7 +51,6 @@ int ReadAllDayYahoo(const char* path){
 	printf(".");
 	//skip the firt line
 	fgets(line,200, fid);
-	printf ( "xxxxxxxxxxxxxxx\n" );
 	DayData head, prev;
 	prev = NULL;
 	int count = 0;
@@ -69,18 +67,15 @@ int ReadAllDayYahoo(const char* path){
 	DayData h = (DayData)shmat(shmid, NULL, 0);
 	while(head){
 		memcpy(h,head, DUSIZE);
-		printf("copied. Date = %d\n", h->date);
 		h++;
 		DayData cur = head;
 		head = head->next;
-
 		//free current node
 		free(cur);
 		cur = NULL;
 		
 	}
 	printf ( "count = %d shmid = %d\n", count, shmid );
-	printf ( "void * = %d, int = %d\n", sizeof(void*),sizeof(int));
 	return shmid;
 }
 
@@ -92,22 +87,21 @@ void ReadDayYahoo(char* line, DayData day){
 	for(i = 0; i< 6; i++){
 		if(i!=0)
 			word = strtok(NULL,",");
-		printf ( "word = %s\n", word );
 		switch(i){
 			case 0:
 				day->date = FormatDate(word);
 				break;
 			case 1:	
-				day->start = atof(word);
+				day->start = atof(word)*100;
 				break;
 			case 2:	
-				day->highest = atof(word);
+				day->highest = atof(word)*100;
 				break;
 			case 3:	
-				day->lowest = atof(word);
+				day->lowest = atof(word)*100;
 				break;
 			case 4:	
-				day->end = atof(word);
+				day->end = atof(word)*100;
 				break;
 			case 5:	
 				day->volume = atof(word);
@@ -118,3 +112,16 @@ void ReadDayYahoo(char* line, DayData day){
 		}
 	}
 }
+
+int LoadHistFromYahoo(char* Sn){
+	char url[100] = "http://ichart.yahoo.com/table.csv?s=";
+	strcat(url,Sn);
+	strcat(url,".SS&a=08&b=25&c=2010&g=d");
+	printf ( "Now downloading data from url: %s\n", url );
+	DownloadURL(url, Sn);
+	int shmid = ReadAllDayYahoo(Sn);
+	return shmid;
+
+}
+
+

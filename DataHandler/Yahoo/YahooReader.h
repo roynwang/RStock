@@ -20,5 +20,6 @@
 #define  YAHOOREADER_INC
 
 void ReadAllDayYahoo(const char* path);
+int LoadHistFromYahoo(char* Sn);
 
 #endif   /* ----- #ifndef YAHOOREADER_INC  ----- */

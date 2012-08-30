@@ -36,6 +36,11 @@ StoTable allstock;
 int MemReadDayTDX(int no){
 	return ReadAllDayTDX("sh600242.day");
 }
+int MemReadDayYahoo(char* no){
+	return LoadHistFromYahoo(no);
+}
+
+
 
 void InitializeServer(){
 	svrshmid = shmget(0, sizeof(int), IPC_CREAT|0666); 
@@ -72,7 +77,8 @@ int ExecuteReq(int no){
 		SendInt(fifo_shstat, h->shmid);
 		return h->shmid;
 	}
-	int head = MemReadDayTDX(no);
+//	int head = MemReadDayTDX(no);
+	int head = MemReadDayYahoo("600000");
 	SetServerStatus(SVRREADY);
 	SendInt(fifo_shstat, head);
 	StoItem si = (StoItem)malloc(sizeof(struct tagStoItem));

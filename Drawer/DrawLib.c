@@ -32,8 +32,8 @@ void getScaleFromDayDataSet(DayData ds, int size, float *h, float *l){
 		if(ds->highest > *h) *h = ds->highest;
 		ds++;
 	}
-	*l*=0.8;
-	*h*=1.2;
+	*l*=0.95;
+	*h*=1.05;
 	printf("final: low = %f high = %f \n", *l,*h);
 }
 

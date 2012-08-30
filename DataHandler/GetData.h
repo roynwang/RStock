@@ -20,4 +20,6 @@
 #define  GETDATA_INC
 
 #include "TDX/TDXReader.h"
+#include "Yahoo/YahooDownloader.h"
+#include "Yahoo/YahooReader.h"
 #endif   /* ----- #ifndef GETDATA_INC  ----- */

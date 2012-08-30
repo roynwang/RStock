@@ -31,11 +31,14 @@
 	int
 main ( int argc, char *argv[] )
 {
-//	char* url = "http://ichart.finance.yahoo.com/table.csv?s=DAI.DE&a=NaN&b=02&c=pr-2&g=d&ignore=.csv";
-//	DownloadURL(url, "yahooresult.csv");
+	char* url = "http://ichart.finance.yahoo.com/table.csv?s=600000.ss&a=NaN&b=02&c=pr-2&g=d&ignore=.csv";
+	DownloadURL(url, "yahooresult.csv");
     int head;
-
     head = ReadAllDayYahoo("yahooresult.csv");
-
+	void * d = (void *)shmat(head, NULL, 0);
+	shmctl(head, IPC_RMID, NULL);
+	shmdt(d);
+	printf ( "deleted the shared memory %d\n" , head);
+	unlink("yahooresult.csv");
 	return EXIT_SUCCESS;
 }				/* ----------  end of function main  ---------- */
