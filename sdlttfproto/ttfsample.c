@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 	TTF_Init();
 
 	// This loads courier, but any font will do.
-	TTF_Font* font = loadfont("DejaVuSans.ttf", 10);
+	TTF_Font* font = loadfont("DejaVuSans.ttf", 20);
 	SDL_Surface* surface = drawtext(font, 255, 255, 255, 70, 0, 0, 0, 0, "test", blended);
 
 	// End of SDL_ttf stuff, this is just SDL to display the text we made.
@@ -55,8 +55,7 @@ int main(int argc, char** argv) {
 	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_DEPTH, SDL_SWSURFACE);
 	SDL_BlitSurface(surface, NULL, screen, NULL);
 	SDL_Flip(screen);
-
-	while (1);
+	SDL_Delay(1000);
 
 	return 0;
 }
