@@ -32,7 +32,7 @@ SDL_Surface *screen;
 
 int FilterKey(SubWin sw, int key);
 void Event_pagedown(SubWin sw);
-
+void Event_colon(SubWin sw);
 void InitializeClient();
 void WaitSVRReady();
 int QueryByNo(int no);
@@ -77,8 +77,13 @@ int FilterKey(SubWin sw, int key){
 		case SDLK_ESCAPE:
 			return 1;
 		case SDLK_PAGEDOWN:
-		    Event_pagedown(sw);
+			Event_pagedown(sw);
 			return 0;
+		case SDLK_PAGEUP:
+			printf ( "You pressed pageup\n" );
+			Event_colon(sw);
+			return 0;
+
 	}
 }
 
@@ -87,7 +92,7 @@ void WaitKeyboard(SubWin sw){
 	SDL_Event event;
 	while(quit!=1)
 	{
-//		printf ( "waiting for keyboard action\n" );
+		//		printf ( "waiting for keyboard action\n" );
 		while( SDL_PollEvent(&event)){
 			switch (event.type){
 				case SDL_KEYDOWN:
@@ -110,29 +115,44 @@ void InitShow(){
 	fheight = 480;
 	screen = initSDL(fwidth,fheight,SDL_SWSURFACE | SDL_ANYFORMAT);
 	SubWin sw = InitialSubWin(screen,40,0,640,240,1);
-	//query here!!!!!!1
-//	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
-//	drawCandlesticks(sw, head, 60);
-//	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
-	//Wait 10 seconds
-	//	SDL_Delay( 10000 );
 	WaitKeyboard( sw);
 }
 void DrawCan(SubWin sw, DayData head){
-//	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
+	//	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
 	drawCandlesticks(sw, head, 60);
-//	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
-//	ShowInput("justfor test");
+	//	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
+	//	ShowInput("justfor test");
 }
 
 void Event_pagedown(SubWin sw){
 	DayData head = (DayData)shmat(QueryByNo(600000), NULL, 0);
 	DrawCan(sw, head);
-	ShowInput("600000");
-//	SDL_Rect f = {0,0,100,100};
-//	SDL_FillRect(screen, &f, 0x00000);
+	//	ShowInput("600000");
+	//	SDL_Rect f = {0,0,100,100};
+	//	SDL_FillRect(screen, &f, 0x00000);
 	SDL_Flip(screen);
+}
 
+void Event_colon(SubWin sw){
+
+	printf ( "....waiting input words\n" );	
+	SDL_Event event;
+	char *input;
+	while(1){
+		while( SDL_PollEvent(&event)){
+			printf ( "waiting input words\n" );	
+			switch (event.key.keysym.sym){
+				case SDLK_a:
+					printf ( "You pressed a\n" );
+					input = "aaaaa";
+					break;
+				case SDLK_F1:
+					ShowInput(input);
+					SDL_Flip(screen);
+					return;
+			}
+		}
+	}
 }
 
 
