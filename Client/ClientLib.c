@@ -21,6 +21,7 @@
 #include "../StatusHandler/StatusMGR.h"
 #include <fcntl.h>
 #include "../inc/SDL.h"
+#include "../inc/SDL_ttf.h"
 #include "../Drawer/AreaMGR.h"
 #include "../Drawer/SDLMGR.h"
 #include "../DataDef/DayData.h"
@@ -38,12 +39,21 @@ int QueryByNo(int no);
 void WaitKeyboard(SubWin sw);
 void InitShow();
 void DrawCan(SubWin sw, DayData head);
+void ShowInput(char* input){
+	printf ( "tring to show %s \n", input );
+	TTF_Font* font = TTF_OpenFont("DejaVuSans.ttf",15);
+	if(font == NULL) printf ( "Load font failed %s \n", TTF_GetError() );
+	SDL_Color color = {255,255,255,70};
+	SDL_Surface * text = TTF_RenderText_Blended(font, input, color);
+	SDL_BlitSurface(text, NULL, screen, NULL);
+}
 
 void InitializeClient(){
 
 	fifo_svstat = CreateFIFO(SVRSTATUS, O_RDONLY);
 	fifo_ctstat = CreateFIFO(CLTSTATUS, O_WRONLY);
 	fifo_shstat = CreateFIFO(SVRSHMID,  O_RDONLY);
+	TTF_Init();
 
 	int shmid = GetInt(fifo_svstat);
 	svstat = (int *)shmat(shmid, NULL, 0);
@@ -111,12 +121,18 @@ void InitShow(){
 void DrawCan(SubWin sw, DayData head){
 //	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
 	drawCandlesticks(sw, head, 60);
-	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
+//	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
+//	ShowInput("justfor test");
 }
 
 void Event_pagedown(SubWin sw){
-	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
+	DayData head = (DayData)shmat(QueryByNo(600000), NULL, 0);
 	DrawCan(sw, head);
+	ShowInput("600000");
+//	SDL_Rect f = {0,0,100,100};
+//	SDL_FillRect(screen, &f, 0x00000);
+	SDL_Flip(screen);
+
 }
 
 
