@@ -56,6 +56,5 @@ int main(int argc, char** argv) {
 	SDL_BlitSurface(surface, NULL, screen, NULL);
 	SDL_Flip(screen);
 	SDL_Delay(1000);
-
 	return 0;
 }
