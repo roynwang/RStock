@@ -103,108 +103,79 @@ void WaitKeyboard(SubWin sw){
 	int quit = 0;
 	SDL_Event event;
 	KEYBOARDMODE kmode = COMMAND;
-	while(quit!=1)
-	{
+	while(quit!=1){
 		//		printf ( "waiting for keyboard action\n" );
-		while( SDL_PollEvent(&event)){
-			printf ( "WaitKeyboard: caught keyboard %x\n", event.key.keysym.sym );
-			switch (event.type){
-				case SDL_KEYDOWN:
-					printf ( "tracking keydown\n" );
-					kmode = TrackKeyDown(sw, event.key.keysym.sym, kmode);
-					break;
-				case SDL_QUIT:
-					printf("caugth keyboard esc !\n");
-					quit = 1;
-			}
+		//		while( SDL_PollEvent(&event)){
+		SDL_WaitEvent(&event);
+		printf ( "WaitKeyboard: caught keyboard %x\n", event.key.keysym.sym );
+		switch (event.type){
+			case SDL_KEYDOWN:
+				printf ( "tracking keydown\n" );
+				kmode = TrackKeyDown(sw, event.key.keysym.sym, kmode);
+				break;
+			case SDL_QUIT:
+				printf("caugth keyboard esc !\n");
+				quit = 1;
+				break;
 		}
 	}
 	endSDL();
-}
-void InitShow(){
-
-	int fwidth ;
-	int fheight ;
-	beginSDL();
-	fwidth = 640;
-	fheight = 480;
-	screen = initSDL(fwidth,fheight,SDL_SWSURFACE | SDL_ANYFORMAT);
-	SubWin sw = InitialSubWin(screen,40,0,640,240,1);
-	subwin = sw;
-	ClearInput();
-	WaitKeyboard( sw);
-}
-void DrawCan(SubWin sw, DayData head){
-	//now only draw the first 60 days
-	drawCandlesticks(sw, head, 60);
-}
-
-void Event_pagedown(SubWin sw){
-	DayData head = (DayData)shmat(QueryByNo(600000), NULL, 0);
-	DrawCan(sw, head);
-	SDL_Flip(screen);
-}
-
-KEYBOARDMODE TrackCommandMode(int key, SubWin sw){
-	switch(key){
-		case SDLK_ESCAPE:
-			return COMMAND;
-		case SDLK_PAGEDOWN:
-			Event_pagedown(sw);
-			return COMMAND;
-		case SDLK_BACKSLASH:
-			printf ( "You pressed back slash\n" );
-			return INPUT;
 	}
-}
-KEYBOARDMODE TrackInputMode(int key){
-	printf ( "TrackInput: caught keyboard %x\n", key );
-	char* clean = "             ";
-	switch (key){
-		case SDLK_0:
-			strcat(userinput,"0");
-			break;
-		case SDLK_1:
-			strcat(userinput,"1");
-			break;
-		case SDLK_2:
-			strcat(userinput,"2");
-			break;
-		case SDLK_3:
-			strcat(userinput,"3");
-			break;
-		case SDLK_4:
-			strcat(userinput,"4");
-			break;
-		case SDLK_5:
-			strcat(userinput,"5");
-			break;
-		case SDLK_6:
-			strcat(userinput,"6");
-			break;
-		case SDLK_7:
-			strcat(userinput,"7");
-			break;
-		case SDLK_8:
-			strcat(userinput,"8");
-			break;
-		case SDLK_9:
-			strcat(userinput,"9");
-			break;
-		case SDLK_RETURN:
-		    
-//			DayData head = (DayData)shmat(QueryByNo(atoi(userinput)), NULL, 0);
+	void InitShow(){
+
+		int fwidth ;
+		int fheight ;
+		beginSDL();
+		fwidth = 640;
+		fheight = 480;
+		screen = initSDL(fwidth,fheight,SDL_SWSURFACE | SDL_ANYFORMAT);
+		SubWin sw = InitialSubWin(screen,40,0,640,240,1);
+		subwin = sw;
+		ClearInput();
+		WaitKeyboard( sw);
+	}
+	void DrawCan(SubWin sw, DayData head){
+		//now only draw the first 60 days
+		drawCandlesticks(sw, head, 60);
+	}
+
+	void Event_pagedown(SubWin sw){
+		DayData head = (DayData)shmat(QueryByNo(600000), NULL, 0);
+		DrawCan(sw, head);
+		SDL_Flip(screen);
+	}
+
+	KEYBOARDMODE TrackCommandMode(int key, SubWin sw){
+		switch(key){
+			case SDLK_ESCAPE:
+				return COMMAND;
+			case SDLK_PAGEDOWN:
+				//			Event_pagedown(sw);
+				return COMMAND;
+			case SDLK_BACKSLASH:
+				printf ( "You pressed back slash\n" );
+				return INPUT;
+		}
+	}
+	KEYBOARDMODE TrackInputMode(int key){
+		printf ( "TrackInput: caught keyboard %x\n", key );
+		if(key>=0x30 && key<0x39){
+			int last = strlen(userinput);
+			printf ( "length is %d\n", last );
+			userinput[last] = key;
+			last++;
+			userinput[last] = '\0';
+		}
+
+		if(key == SDLK_RETURN){
+			SDL_FillRect(screen, NULL, BLACK);
 			DrawCan(subwin, (DayData)shmat(QueryByNo(atoi(userinput)), NULL, 0));
-//			SDL_Flip(screen);
 			ClearInput();
+			userinput[0] = '\0';
 			return COMMAND;
-		default:
-			break;
+		}
+		ShowInput(userinput);
+		return INPUT;
 	}
-	printf ( "strcat done: %s \n", userinput );
-	ShowInput(userinput);
-
-	return INPUT;
-}
 
 
