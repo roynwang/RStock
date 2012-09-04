@@ -39,6 +39,7 @@ int *svstat;
 char userinput[100] = "";
 
 SDL_Surface *screen;
+SubWin subwin;
 KEYBOARDMODE TrackKeyDown(SubWin sw, int key, KEYBOARDMODE kmode);
 void Event_pagedown(SubWin sw);
 KEYBOARDMODE TrackInputMode(int key);
@@ -129,6 +130,7 @@ void InitShow(){
 	fheight = 480;
 	screen = initSDL(fwidth,fheight,SDL_SWSURFACE | SDL_ANYFORMAT);
 	SubWin sw = InitialSubWin(screen,40,0,640,240,1);
+	subwin = sw;
 	ClearInput();
 	WaitKeyboard( sw);
 }
@@ -190,6 +192,10 @@ KEYBOARDMODE TrackInputMode(int key){
 			strcat(userinput,"9");
 			break;
 		case SDLK_RETURN:
+		    
+//			DayData head = (DayData)shmat(QueryByNo(atoi(userinput)), NULL, 0);
+			DrawCan(subwin, (DayData)shmat(QueryByNo(atoi(userinput)), NULL, 0));
+//			SDL_Flip(screen);
 			ClearInput();
 			return COMMAND;
 		default:

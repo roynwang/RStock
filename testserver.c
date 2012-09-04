@@ -78,7 +78,9 @@ int ExecuteReq(int no){
 		return h->shmid;
 	}
 //	int head = MemReadDayTDX(no);
-	int head = MemReadDayYahoo("600000");
+    char sn[100];
+	sprintf(sn,"%d",no);
+	int head = MemReadDayYahoo(sn);
 	SetServerStatus(SVRREADY);
 	SendInt(fifo_shstat, head);
 	StoItem si = (StoItem)malloc(sizeof(struct tagStoItem));
