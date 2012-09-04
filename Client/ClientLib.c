@@ -32,9 +32,12 @@ typedef enum{
 	INPUT
 } KEYBOARDMODE;
 
+//pipe for status 
 int fifo_svstat, fifo_ctstat, fifo_shstat;
 int *svstat;
+//string to record user input
 char userinput[100] = "";
+
 SDL_Surface *screen;
 KEYBOARDMODE TrackKeyDown(SubWin sw, int key, KEYBOARDMODE kmode);
 void Event_pagedown(SubWin sw);
@@ -53,10 +56,17 @@ void ShowInput(const char* input){
 	SDL_Color color = {255,255,255,70};
 	SDL_Surface * text = TTF_RenderText_Blended(font, input, color);
 	SDL_BlitSurface(text, NULL, screen, NULL);
+	SDL_Flip(screen);
+	SDL_FreeSurface(text);
+}
+void ClearInput(){
+	SDL_Rect sr = {x:0,y:0, w:80,h:20};
+	SDL_FillRect(screen, &sr, BLACK);
+	SDL_Flip(screen);
 }
 
-void InitializeClient(){
 
+void InitializeClient(){
 	fifo_svstat = CreateFIFO(SVRSTATUS, O_RDONLY);
 	fifo_ctstat = CreateFIFO(CLTSTATUS, O_WRONLY);
 	fifo_shstat = CreateFIFO(SVRSHMID,  O_RDONLY);
@@ -119,13 +129,12 @@ void InitShow(){
 	fheight = 480;
 	screen = initSDL(fwidth,fheight,SDL_SWSURFACE | SDL_ANYFORMAT);
 	SubWin sw = InitialSubWin(screen,40,0,640,240,1);
+	ClearInput();
 	WaitKeyboard( sw);
 }
 void DrawCan(SubWin sw, DayData head){
-	//	DayData head = (DayData)shmat(QueryByNo(8888), NULL, 0);
+	//now only draw the first 60 days
 	drawCandlesticks(sw, head, 60);
-	//	SDL_UpdateRect(screen, 0, 0, 0, 0);//刷新屏幕
-	//	ShowInput("justfor test");
 }
 
 void Event_pagedown(SubWin sw){
@@ -148,14 +157,13 @@ KEYBOARDMODE TrackCommandMode(int key, SubWin sw){
 }
 KEYBOARDMODE TrackInputMode(int key){
 	printf ( "TrackInput: caught keyboard %x\n", key );
+	char* clean = "             ";
 	switch (key){
 		case SDLK_0:
 			strcat(userinput,"0");
 			break;
 		case SDLK_1:
 			strcat(userinput,"1");
-			ShowInput(userinput);
-			SDL_Flip(screen);
 			break;
 		case SDLK_2:
 			strcat(userinput,"2");
@@ -182,13 +190,14 @@ KEYBOARDMODE TrackInputMode(int key){
 			strcat(userinput,"9");
 			break;
 		case SDLK_RETURN:
-			ShowInput(userinput);
-			SDL_Flip(screen);
+			ClearInput();
 			return COMMAND;
 		default:
 			break;
 	}
 	printf ( "strcat done: %s \n", userinput );
+	ShowInput(userinput);
+
 	return INPUT;
 }
 
